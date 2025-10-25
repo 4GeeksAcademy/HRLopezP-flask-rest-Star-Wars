@@ -72,6 +72,9 @@ def add_new_user():
     user = User.query.filter_by(email=body["email"]).first()
     if user is not None:
         return jsonify({"message": "User exist"}), 400
+    user_username = User.query.filter_by(username=body["username"]).first()
+    if user_username is not None:
+        return jsonify({"message": "Username exist"}), 400
     user = User(email=body["email"], password=body["password"], name=body["name"], username=body["username"])
     db.session.add(user)
     try:
@@ -123,8 +126,8 @@ def add_new_people():
     people = People.query.filter_by(full_name=body["full_name"]).first()
     if people is not None:
         return jsonify({"message": "People exist"}), 400
-
-    people = People(full_name=body["full_name"], gender=body["gender"], description=body["description"], height=body["height"], url=body["url"])
+    height_value = body.get("height") 
+    people = People(full_name=body["full_name"], gender=body["gender"], description=body["description"], height=height_value, url=body["url"])
     db.session.add(people)
     try:
         db.session.commit()
@@ -175,7 +178,10 @@ def add_new_planet():
     planet = Planet.query.filter_by(name=body["name"]).first()
     if planet is not None:
         return jsonify({"message": "Planet exist"}), 400
-    planet = Planet(name=body["name"], description=body["description"], population=body["population"], url=body["url"], climate=body["climate"])
+    
+    climate_value= body.get("climate")
+    population_value= body.get("population")
+    planet = Planet(name=body["name"], description=body["description"], population=population_value, url=body["url"], climate=climate_value)
     db.session.add(planet)
     try:
         db.session.commit()
@@ -227,7 +233,9 @@ def add_new_vehicle():
     if vehicle is not None:
         return jsonify({"message": "Vehicle exist"}), 400
     
-    vehicle = Vehicle(model=body["model"], capacity=body["capacity"], name=body["name"], url=body["url"], description=body["description"])
+    model_value= body.get("model")
+    capacity_value= body.get("capacity")
+    vehicle = Vehicle(model=model_value, capacity=capacity_value, name=body["name"], url=body["url"], description=body["description"])
     db.session.add(vehicle)
     try:
         db.session.commit()
